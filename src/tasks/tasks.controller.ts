@@ -18,6 +18,8 @@ import { Task } from './task.entity';
 import { AuthGuard } from '@nestjs/passport';
 import { GetUser } from 'src/auth/get-user.decorator';
 import { User } from 'src/auth/user.entity';
+import { ApiQuery } from '@nestjs/swagger';
+import { TaskStatus } from './task-status.enum';
 
 @Controller('tasks')
 @UseGuards(AuthGuard())
@@ -27,6 +29,8 @@ export class TasksController {
   constructor(private tasksService: TasksService) {}
 
   @Get()
+  @ApiQuery({ name: 'status', enum: TaskStatus, required: false })
+  @ApiQuery({ name: 'search', required: false })
   getTasks(
       @Query() filterDto: GetTasksFilterDto, 
       @GetUser() user: User
@@ -63,6 +67,7 @@ export class TasksController {
   }
 
   @Patch('/:id/status')
+  @ApiQuery({ name: 'status', enum: TaskStatus })
   updateTaskStatus(
     @Param('id') id: string,
     @Body() updateTaskStatusDto: UpdateTaskStatusDto,
